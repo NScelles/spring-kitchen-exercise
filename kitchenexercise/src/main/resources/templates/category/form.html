@@ -16,6 +16,9 @@
         <label class="col-12"  th:for="name">Name :
             <input class="w-100" th:field="*{name}" th:name="name" th:type="text" th:value="${category.getName()}">
         </label>
+        <label class="col-12"  th:for="description">Description :
+            <input class="w-100" th:field="*{description}" th:name="description" th:type="text" th:value="${category.getDescription()}">
+        </label>
         <input class="btn btn-primary col-2 align-self-sm-center align-self-md-end m-3" type="submit" th:value='${(isExist)?"Update":"Add"}'/>
     </form>
     <a class="align-self-end btn btn-outline-primary" th:href="@{/category/list}" >Back to list</a>

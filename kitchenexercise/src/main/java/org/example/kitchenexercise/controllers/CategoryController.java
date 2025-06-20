@@ -1,8 +1,9 @@
 package org.example.kitchenexercise.controllers;
 
 import org.example.kitchenexercise.models.Category;
-import org.example.kitchenexercise.services.KitchenService;
-import org.example.kitchenexercise.services.LocalKitchenService;
+import org.example.kitchenexercise.services.category.BaseCategoryService;
+import org.example.kitchenexercise.services.recipe.BaseRecipeService;
+import org.example.kitchenexercise.services.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,53 +12,68 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @Controller
-public class CategoryController {
+@RequestMapping("/category")
+public class CategoryController extends BaseController<Category> {
 
-    private final KitchenService kitchenService;
+    private final BaseCategoryService service;
 
     @Autowired
-    public CategoryController(LocalKitchenService kitchenService) {
-        this.kitchenService = kitchenService;
+    public CategoryController(BaseCategoryService recipeService) {
+        this.service = recipeService;
     }
 
-    @GetMapping("/category/list")
-    public String listCategory(Model model) {
-        model.addAttribute("categories",kitchenService.getCategories());
+    @Override
+    @GetMapping("/list")
+    public String list(Model model) {
+        model.addAttribute("categories",service.get());
         model.addAttribute("mode","list");
         return "category/list";
     }
 
-    @GetMapping("/category/add")
-    public String addCategory(Model model) {
+    @Override
+    @GetMapping("/{id}")
+    public String show(@PathVariable UUID id, Model model){
+        model.addAttribute("category", service.get(id));
+        return "category/details";
+    }
+
+    @Override
+    @GetMapping("/add")
+    public String add(Model model) {
         model.addAttribute("isExist",false);
         model.addAttribute("category", new Category());
         return "category/form";
     }
 
-    @GetMapping("/category/update/{id}")
+    @Override
+    @GetMapping("/update/{id}")
     public String update(@PathVariable UUID id, Model model) {
         model.addAttribute("isExist", true);
-        model.addAttribute("category", kitchenService.getCategory(id));
+        model.addAttribute("category", service.get(id));
         return "category/form";
     }
 
-    @PostMapping("/category/update")
-    public String updateCategory(@ModelAttribute("category") Category category, Model model) {
-        kitchenService.updateCategory(category);
+    @Override
+    @PostMapping("/update")
+    public String updateElement(@ModelAttribute("category") Category element, Model model) {
+        service.update(element);
         return "redirect:/category/list";
     }
 
-    @PostMapping("/category/add")
-    public String addCategory(@ModelAttribute("category") Category category) {
-        category.setId(UUID.randomUUID());
-        kitchenService.addCategory(category);
+    @Override
+    @PostMapping("/add")
+    public String addElement(@ModelAttribute Category element) {
+        element.setId(UUID.randomUUID());
+        service.add(element);
         return "redirect:/category/list";
     }
 
-    @GetMapping("/category/delete/{id}")
-    public String delete(@PathVariable UUID id, @RequestParam(value = "from") String destination, Model model) {
-        kitchenService.deleteCategory(id);
-        kitchenService.deleteRecipeByCategory(id);
-        return "redirect:"+destination;
+    @Override
+    @GetMapping("/delete/{id}")
+    public String delete(@PathVariable UUID id, @RequestParam(value = "from",required = false) String destination, Model model) {
+        service.delete(id);
+        if(destination != null && !destination.isEmpty())
+            return "redirect:"+destination;
+        return "redirect:/category/list";
     }
 }
