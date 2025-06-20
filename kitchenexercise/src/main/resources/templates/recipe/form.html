@@ -11,13 +11,13 @@
 <body>
 <div class="bs-body-color d-flex justify-content-center align-items-center flex-column card m-5">
   <h1><span th:text='${((isExist)? "Update" : "Add") + " Recipe"} '></span></h1>
-  <form  class="m-3 d-flex flex-column justify-content-around w-100 h-100 row"  th:object="${recipe}" method="post" th:action='@{ ${ (isExist)? "/recipe/update" : "/recipe/add"}}'>
+  <form  class="m-3 d-flex flex-column justify-content-around w-100 h-100 row"  th:object="${recipe}" method="post" th:action='@{/recipe/add}'>
     <input th:name="id" type="hidden" th:field="*{id}" th:value="${recipe.getId()}">
     <label class="col-12"  th:for="name">Name :
       <input class="w-100" th:name="name" th:type="text" th:field="*{name}"  th:value="${recipe.getName()}">
     </label>
 
-    <select th:field="*{categoryId}" class="form-select" aria-label="categories select">
+    <select th:field="*{category.id}" class="form-select" aria-label="categories select">
       <option th:value="*{null}" selected>Select a menu</option>
       <option th:each="aCategory: ${categories}" th:text="${aCategory.getName()}"  th:value="${aCategory.getId()}"/>
     </select>

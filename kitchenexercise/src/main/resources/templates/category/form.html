@@ -11,7 +11,7 @@
 <body>
 <div class="bs-body-color d-flex justify-content-center align-items-center flex-column card m-5">
     <h1><span th:text='${((isExist)? "Update" : "Add") + " Category"} '></span></h1>
-    <form  class="m-3 d-flex flex-column justify-content-around w-100 h-100 row" th:object="${category}" method="post" th:action='@{ ${(isExist)? "/category/update" : "/category/add"}}'>
+    <form  class="m-3 d-flex flex-column justify-content-around w-100 h-100 row" th:object="${category}" method="post" th:action='@{/category/add}'>
         <input th:name="id" type="hidden" th:field="*{id}" th:value="${category.getId()}">
         <label class="col-12"  th:for="name">Name :
             <input class="w-100" th:field="*{name}" th:name="name" th:type="text" th:value="${category.getName()}">

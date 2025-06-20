@@ -2,6 +2,7 @@ package org.example.kitchenexercise.controllers;
 
 import org.example.kitchenexercise.models.Category;
 import org.example.kitchenexercise.services.category.BaseCategoryService;
+import org.example.kitchenexercise.services.category.MySqlCategoryService;
 import org.example.kitchenexercise.services.recipe.BaseRecipeService;
 import org.example.kitchenexercise.services.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ public class CategoryController extends BaseController<Category> {
     private final BaseCategoryService service;
 
     @Autowired
-    public CategoryController(BaseCategoryService recipeService) {
+    public CategoryController(MySqlCategoryService recipeService) {
         this.service = recipeService;
     }
 
@@ -53,18 +54,11 @@ public class CategoryController extends BaseController<Category> {
         return "category/form";
     }
 
-    @Override
-    @PostMapping("/update")
-    public String updateElement(@ModelAttribute("category") Category element, Model model) {
-        service.update(element);
-        return "redirect:/category/list";
-    }
 
     @Override
     @PostMapping("/add")
     public String addElement(@ModelAttribute Category element) {
-        element.setId(UUID.randomUUID());
-        service.add(element);
+        service.addOrUpdate(element);
         return "redirect:/category/list";
     }
 

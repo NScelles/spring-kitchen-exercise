@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 @Controller
@@ -42,7 +43,7 @@ public class RecipeController extends BaseController<Recipe> {
     @GetMapping("/add")
     public String add(Model model){
         model.addAttribute("isExist", false);
-        model.addAttribute("categories", service.get());
+        model.addAttribute("categories", service.getCategories() != null ? service.getCategories() : new ArrayList<Category>());
         model.addAttribute("recipe", new Recipe());
         return "recipe/form";
     }
@@ -51,25 +52,16 @@ public class RecipeController extends BaseController<Recipe> {
     @GetMapping("/update/{id}")
     public String update(@PathVariable UUID id, Model model){
         model.addAttribute("isExist", true);
-        model.addAttribute("categories", service.get());
+        model.addAttribute("categories", service.getCategories() != null ? service.getCategories() : new ArrayList<Category>());
         model.addAttribute("recipe", service.get(id));
         return "recipe/form";
     }
 
-    @Override
-    @PostMapping("/update")
-    public String updateElement(@ModelAttribute("recipe") Recipe element, Model model) {
-        element.setCategory(service.getCategories().stream().filter(category -> category.getId().equals(element.getCategory().getId())).findFirst().get());
-        service.add(element);
-        return "redirect:/recipe/list";
-    }
 
     @Override
     @PostMapping("/add")
     public String addElement(@ModelAttribute Recipe element) {
-        element.setCategory(service.getCategories().stream().filter(category -> category.getId().equals(element.getCategory().getId())).findFirst().get());
-        element.setId(UUID.randomUUID());
-        service.add(element);
+        service.addOrUpdate(element);
         return "redirect:/recipe/list";
     }
 

@@ -1,39 +1,34 @@
 package org.example.kitchenexercise.services;
 
 
-import org.example.kitchenexercise.models.Recipe;
-import org.example.kitchenexercise.repositories.BaseRepository;
-import org.example.kitchenexercise.repositories.recipe.BaseRecipeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 
 public class BaseService<T> {
 
-    protected BaseRepository<T> repository;
+    protected JpaRepository<T,UUID> repository;
 
-    public BaseService(BaseRepository<T> repository) {
+
+    public BaseService(JpaRepository<T,UUID> repository) {
         this.repository = repository;
     }
 
     public List<T> get(){
-        return repository.get();
+        return repository.findAll();
     }
     public T get(UUID id){
-        return repository.get(id);
+        return repository.getReferenceById(id);
     }
-    public T add(T element){
-        return repository.add(element);
-    }
-    public T update(T element){
-        return repository.update(element);
+    public T addOrUpdate(T element){
+        return repository.save(element);
     }
 
     public void delete(UUID id){
-        repository.delete(id);
+        repository.delete(get(id));
     }
 }
